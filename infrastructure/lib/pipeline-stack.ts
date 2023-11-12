@@ -29,6 +29,11 @@ export class PipelineStack extends cdk.Stack {
         actions: ["ec2:Describe*"],
         resources: ["*"],
       }),
+      // allow alb describ
+      new PolicyStatement({
+        actions: ["elasticloadbalancing:Describe*"],
+        resources: ["*"],
+      }),
     ];
 
     const codepipeline = new CodePipeline(this, "Pipeline", {
