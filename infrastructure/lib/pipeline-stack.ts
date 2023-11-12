@@ -24,9 +24,9 @@ export class PipelineStack extends cdk.Stack {
         actions: ["ssm:GetParameter"],
         resources: [`arn:aws:ssm:${this.region}:${this.account}:*`],
       }),
-      // allow ec2:DescribeVpcs
+      // allow ec2 describe
       new PolicyStatement({
-        actions: ["ec2:DescribeVpcs"],
+        actions: ["ec2:Describe*"],
         resources: ["*"],
       }),
     ];
