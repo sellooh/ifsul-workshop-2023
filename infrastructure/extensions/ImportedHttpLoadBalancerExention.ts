@@ -42,6 +42,12 @@ export class ImportedHttpLoadBalancerExtension extends ServiceExtension {
         certificateArn: this.certificateArn
       }] : undefined
     });
+    this.listener.addAction('DefaultAction', {
+      action: alb.ListenerAction.fixedResponse(404, {
+        contentType: 'text/plain',
+        messageBody: 'Cannot route your request; no matching project found.',
+      }),
+    });
   }
 
   // Minor service configuration tweaks to work better with a load balancer
@@ -65,6 +71,7 @@ export class ImportedHttpLoadBalancerExtension extends ServiceExtension {
       conditions: [
         alb.ListenerCondition.pathPatterns([`/${this.parentService.id}/*`])
       ],
+      priority: 1,
       targets: [service],
       protocol: alb.ApplicationProtocol.HTTP
     });
