@@ -19,10 +19,16 @@ export class PipelineStack extends cdk.Stack {
     });
 
     const codebuildPolicies: PolicyStatement[] = [
+      // allow read params
       new PolicyStatement({
         actions: ["ssm:GetParameter"],
         resources: [`arn:aws:ssm:${this.region}:${this.account}:*`],
-      })
+      }),
+      // allow ec2:DescribeVpcs
+      new PolicyStatement({
+        actions: ["ec2:DescribeVpcs"],
+        resources: ["*"],
+      }),
     ];
 
     const codepipeline = new CodePipeline(this, "Pipeline", {
