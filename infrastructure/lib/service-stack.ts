@@ -3,7 +3,9 @@ import { Construct } from 'constructs';
 import * as ssm from 'aws-cdk-lib/aws-ssm';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as ecs from 'aws-cdk-lib/aws-ecs';
+import * as elb from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { Container, Environment, Service, ServiceDescription } from '@aws-cdk-containers/ecs-service-extensions';
+import { ImportedHttpLoadBalancerExtension } from '../extensions/ImportedHttpLoadBalancerExention';
 
 export class ServiceStage extends cdk.Stage {
   constructor(scope: Construct, id: string, props?: cdk.StageProps) {
@@ -33,6 +35,9 @@ export class ServiceStack extends cdk.Stack {
 
     // Import /demo/loadBalancerArn
     const loadBalancerArn = ssm.StringParameter.valueFromLookup(this, '/demo/loadBalancerArn');
+    const applicationLoadBalancer = elb.ApplicationLoadBalancer.fromLookup(this, 'loadBalancer', {
+      loadBalancerArn
+    });
 
     const environment = new Environment(this, 'demo', {
       vpc
@@ -47,7 +52,10 @@ export class ServiceStack extends cdk.Stack {
       environment: {
         PORT: '80',
       },
-    }));
+    }))
+    nameDescription.add(new ImportedHttpLoadBalancerExtension({
+      applicationLoadBalancer,
+    }));;
 
     const nameService = new Service(this, 'myservice', {
       environment: environment,
