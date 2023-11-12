@@ -1,0 +1,39 @@
+# Use this file to load DEVELOPMENT servives like mysql
+version: '3.5'
+services:
+  java-demo-mysql:
+    container_name: java-demo-mysql
+    hostname: java-demo-mysql
+    platform: ${MYSQL_TARGETPLATFORM}
+    image: mysql:8.2.0
+    environment:
+      MYSQL_DATABASE: "database"
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-changeme}
+    ports:
+      - ${MYSQL_PORT}:${MYSQL_PORT}
+    restart: unless-stopped
+    env_file: .env
+    healthcheck:
+        test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+        timeout: 20s
+        retries: 10
+    networks:
+      - demo
+
+  java-demo-api: &java-demo-api
+    depends_on:
+      java-demo-mysql:
+        condition: service_healthy
+    env_file: .env
+    volumes:
+      - .:/app:rw
+    networks:
+      - demo
+
+volumes:
+  db:
+    driver: local
+
+networks:
+  demo:
+    driver: bridge

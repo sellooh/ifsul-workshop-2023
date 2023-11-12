@@ -1,0 +1,3 @@
+ARG VARIANT="latest"
+ARG JAVA_TARGETPLATFORM="linux/arm64/v8"
+FROM --platform=${JAVA_TARGETPLATFORM} gradle:jdk17

@@ -1,0 +1,18 @@
+{
+	"name": "Java Demo",
+	"dockerComposeFile": [
+		"../docker-compose.yml",
+		"../docker-compose.override.yml",
+		"docker-compose.yml"
+	],
+	"service": "java-demo-api",
+	"workspaceFolder": "/app",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"vscjava.vscode-java-pack",
+				"shardulm94.trailing-spaces"
+			]
+		}
+	}
+}
