@@ -49,7 +49,7 @@ export class ServiceStack extends cdk.Stack {
       },
     }));
 
-    const nameService = new Service(this, 'name', {
+    const nameService = new Service(this, 'myservice', {
       environment: environment,
       serviceDescription: nameDescription,
     });
