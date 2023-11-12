@@ -36,7 +36,7 @@ export class PipelineStack extends cdk.Stack {
       synth: new ShellStep("Synth", {
         input: githubInput,
         commands: ["cd infrastructure", "npm ci", "npm run build", "npx cdk synth"],
-        primaryOutputDirectory: "codepipeline/cdk.out",
+        primaryOutputDirectory: "infrastructure/cdk.out",
       }),
       codeBuildDefaults: {
         rolePolicy: codebuildPolicies,
