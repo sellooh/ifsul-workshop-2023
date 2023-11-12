@@ -4,7 +4,7 @@ import * as ssm from 'aws-cdk-lib/aws-ssm';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as ecs from 'aws-cdk-lib/aws-ecs';
 import * as elb from 'aws-cdk-lib/aws-elasticloadbalancingv2';
-import { Container, Environment, Service, ServiceDescription } from '@aws-cdk-containers/ecs-service-extensions';
+import { Container, Environment, EnvironmentCapacityType, Service, ServiceDescription } from '@aws-cdk-containers/ecs-service-extensions';
 import { ImportedHttpLoadBalancerExtension } from '../extensions/ImportedHttpLoadBalancerExention';
 
 interface ServiceStageProps {
@@ -52,9 +52,9 @@ export class ServiceStack extends cdk.Stack {
       loadBalancerArn
     });
 
-    const environment = new Environment(this, 'demo', {
-      vpc,
+    const environment = Environment.fromEnvironmentAttributes(this, 'demo', {
       cluster: cluster as ecs.Cluster,
+      capacityType: EnvironmentCapacityType.FARGATE
     });
 
     const nameDescription = new ServiceDescription();
