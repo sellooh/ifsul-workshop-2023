@@ -9,6 +9,9 @@ export class InfrastructureStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
+    if (process.env.VPC_ID === undefined) {
+      return;
+    }
     // Import VPC
     const vpc = ec2.Vpc.fromLookup(this, 'vpc', {
       vpcId: process.env.VPC_ID,
