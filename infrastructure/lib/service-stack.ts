@@ -7,22 +7,30 @@ import * as elb from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { Container, Environment, Service, ServiceDescription } from '@aws-cdk-containers/ecs-service-extensions';
 import { ImportedHttpLoadBalancerExtension } from '../extensions/ImportedHttpLoadBalancerExention';
 
+interface ServiceStageProps {
+  serviceName: string;
+  stackProps?: cdk.StackProps;
+}
+
 export class ServiceStage extends cdk.Stage {
-  constructor(scope: Construct, id: string, props?: cdk.StageProps) {
-    super(scope, id, props);
+  constructor(scope: Construct, id: string, props: ServiceStageProps) {
+    super(scope, id, props.stackProps);
 
     new ServiceStack(this, 'ServiceStack', {
-      env: {
-        account: process.env.CDK_DEFAULT_ACCOUNT,
-        region: process.env.CDK_DEFAULT_REGION,
-      },
+      serviceName: props.serviceName,
+      stackProps: props.stackProps,
     });
   }
 }
 
+interface ServiceStackProps {
+  serviceName: string;
+  stackProps?: cdk.StackProps;
+}
+
 export class ServiceStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
-    super(scope, id, props);
+  constructor(scope: Construct, id: string, props: ServiceStackProps) {
+    super(scope, id, props.stackProps);
 
     // Import /demo/vpcId
     const vpcId = ssm.StringParameter.valueFromLookup(this, '/demo/vpcId');
@@ -32,6 +40,11 @@ export class ServiceStack extends cdk.Stack {
 
     // Import /demo/clusterName
     const clusterName = ssm.StringParameter.valueFromLookup(this, '/demo/clusterName');
+    const cluster = ecs.Cluster.fromClusterAttributes(this, 'cluster', {
+      clusterName,
+      vpc,
+      securityGroups: []
+    });
 
     // Import /demo/loadBalancerArn
     const loadBalancerArn = ssm.StringParameter.valueFromLookup(this, '/demo/loadBalancerArn');
@@ -40,7 +53,8 @@ export class ServiceStack extends cdk.Stack {
     });
 
     const environment = new Environment(this, 'demo', {
-      vpc
+      vpc,
+      cluster: cluster as ecs.Cluster,
     });
 
     const nameDescription = new ServiceDescription();
@@ -57,7 +71,7 @@ export class ServiceStack extends cdk.Stack {
       applicationLoadBalancer,
     }));;
 
-    const nameService = new Service(this, 'myservice', {
+    const nameService = new Service(this, props.serviceName, {
       environment: environment,
       serviceDescription: nameDescription,
     });

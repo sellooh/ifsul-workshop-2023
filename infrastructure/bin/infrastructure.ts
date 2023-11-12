@@ -22,8 +22,11 @@ new InfrastructureStack(app, 'InfrastructureStack', {
 });
 
 new PipelineStack(app, 'PipelineStack', {
-  env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
-  tags: {
-    project: 'IFSUL',
+  branchName: process.env.BRANCH_NAME || 'main',
+  stackProps: {
+    env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
+    tags: {
+      project: 'IFSUL',
+    }
   }
 });

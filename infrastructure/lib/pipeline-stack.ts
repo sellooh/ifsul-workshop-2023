@@ -6,15 +6,18 @@ import { Construct } from 'constructs';
 import { ServiceStack, ServiceStage } from './service-stack';
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 
-export class PipelineStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
-    super(scope, id, props);
+interface PipelineStackProps {
+  branchName: string;
+  stackProps: cdk.StackProps;
+}
 
-    const branchName = process.env.BRANCH_NAME || "main";
+export class PipelineStack extends cdk.Stack {
+  constructor(scope: Construct, id: string, props: PipelineStackProps) {
+    super(scope, id, props.stackProps);
 
     const githubConnectionArn = StringParameter.valueForStringParameter(this, "/demo/githubConnection");
 
-    const githubInput = CodePipelineSource.connection("sellooh/ifsul-workshop-2023", branchName, {
+    const githubInput = CodePipelineSource.connection("sellooh/ifsul-workshop-2023", props.branchName, {
       connectionArn: githubConnectionArn,
     });
 
@@ -49,7 +52,10 @@ export class PipelineStack extends cdk.Stack {
     });
 
     const deployWave = codepipeline.addWave("DeployWave");
-    deployWave.addStage(new ServiceStage(this, "ServiceStage", {}));
+    deployWave.addStage(new ServiceStage(this, "ServiceStage", {
+      serviceName: props.branchName,
+      stackProps: props.stackProps,
+    }));
   }
 }
 
