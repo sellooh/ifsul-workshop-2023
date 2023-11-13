@@ -12,6 +12,8 @@ export interface HttpLoadBalancerProps {
 
   readonly applicationLoadBalancer: alb.IApplicationLoadBalancer
 
+  readonly targetGroup?: alb.IApplicationTargetGroup
+
   readonly certificateArn?: string
 }
 /**
@@ -19,35 +21,15 @@ export interface HttpLoadBalancerProps {
  * to one or more replicas of the application container.
  */
 export class ImportedHttpLoadBalancerExtension extends ServiceExtension {
-  private listener!: alb.IApplicationListener;
-  private readonly applicationLoadBalancer!: alb.IApplicationLoadBalancer;
-  private readonly requestsPerTarget?: number;
-  private readonly certificateArn: string | undefined;
+  private readonly targetGroup?: alb.IApplicationTargetGroup;
 
   constructor (props: HttpLoadBalancerProps) {
     super('load-balancer');
-    this.requestsPerTarget = props.requestsPerTarget;
-    this.applicationLoadBalancer = props.applicationLoadBalancer;
-    this.certificateArn = props.certificateArn;
+    this.targetGroup = props.targetGroup;
   }
 
   public prehook (service: Service, scope: Construct): void {
     this.parentService = service;
-
-    this.listener = this.applicationLoadBalancer.addListener('ApplicationLoadBalancerListener', {
-      port: 8080,
-      open: true,
-      protocol: alb.ApplicationProtocol.HTTP,
-      certificates: this.certificateArn ? [{
-        certificateArn: this.certificateArn
-      }] : undefined
-    });
-    this.listener.addAction('DefaultAction', {
-      action: alb.ListenerAction.fixedResponse(404, {
-        contentType: 'text/plain',
-        messageBody: 'Cannot route your request; no matching project found.',
-      }),
-    });
   }
 
   // Minor service configuration tweaks to work better with a load balancer
@@ -65,27 +47,20 @@ export class ImportedHttpLoadBalancerExtension extends ServiceExtension {
 
   // After the service is created add the service to the load balancer's listener
   public useService (service: ecs.Ec2Service | ecs.FargateService): void {
-    const targetGroup = this.listener.addTargets(this.parentService.id, {
-      deregistrationDelay: Duration.seconds(10),
-      port: 80,
-      conditions: [
-        alb.ListenerCondition.pathPatterns([`/${this.parentService.id}/*`])
-      ],
-      priority: 1,
-      targets: [service],
-      protocol: alb.ApplicationProtocol.HTTP
-    });
-    this.parentService.targetGroup = targetGroup;
-
-    // if (this.requestsPerTarget) {
-    //   if (!this.parentService.scalableTaskCount) {
-    //     throw Error(`Auto scaling target for the service '${this.parentService.id}' hasn't been configured. Please use Service construct to configure 'minTaskCount' and 'maxTaskCount'.`);
-    //   }
-    //   this.parentService.scalableTaskCount.scaleOnRequestCount(`${this.parentService.id}-target-request-count-${this.requestsPerTarget}`, {
-    //     requestsPerTarget: this.requestsPerTarget,
-    //     targetGroup: this.parentService.targetGroup,
-    //   });
-    //   this.parentService.enableAutoScalingPolicy();
-    // }
+    // const targetGroup = this.listener.addTargets(this.parentService.id, {
+    //   deregistrationDelay: Duration.seconds(10),
+    //   port: 80,
+    //   conditions: [
+    //     alb.ListenerCondition.pathPatterns([`/${this.parentService.id}/*`])
+    //   ],
+    //   priority: 1,
+    //   targets: [service],
+    //   protocol: alb.ApplicationProtocol.HTTP
+    // });
+    if (this.targetGroup === undefined) {
+      return;
+    }
+    this.targetGroup.addTarget(service);
+    this.parentService.targetGroup = this.targetGroup as alb.ApplicationTargetGroup;
   }
 }

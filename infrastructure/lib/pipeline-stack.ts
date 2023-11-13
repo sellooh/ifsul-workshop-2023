@@ -5,6 +5,7 @@ import { CodePipeline, CodePipelineSource, ShellStep } from 'aws-cdk-lib/pipelin
 import { Construct } from 'constructs';
 import { ServiceStack, ServiceStage } from './service-stack';
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { BuildSpec } from 'aws-cdk-lib/aws-codebuild';
 
 interface PipelineStackProps {
   branchName: string;
@@ -40,7 +41,7 @@ export class PipelineStack extends cdk.Stack {
     ];
 
     const codepipeline = new CodePipeline(this, "Pipeline", {
-      pipelineName: "Pipeline",
+      pipelineName: "Pipeline-"+props.branchName,
       synth: new ShellStep("Synth", {
         input: githubInput,
         commands: ["cd infrastructure", "npm ci", "npm run build", "npx cdk synth"],
@@ -48,6 +49,13 @@ export class PipelineStack extends cdk.Stack {
       }),
       codeBuildDefaults: {
         rolePolicy: codebuildPolicies,
+        partialBuildSpec: BuildSpec.fromObject({
+          env: {
+            variables: {
+              BRANCH_NAME: props.branchName,
+            },
+          },
+        }),
       },
     });
 

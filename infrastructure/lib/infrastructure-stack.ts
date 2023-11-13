@@ -28,6 +28,43 @@ export class InfrastructureStack extends cdk.Stack {
       internetFacing: true,
     });
 
+    // Create listener and target groups
+    const listener = lb.addListener('LBListener', {
+      port: 8080,
+      open: true,
+      protocol: elb.ApplicationProtocol.HTTP,
+    });
+
+    const branches = process.env.BRANCHES?.split(',') || [];
+    for(const [i, branch] of branches.entries()) {
+      const emptytg = new elb.ApplicationTargetGroup(this, 'applicationTargetGroup-' + branch, {
+        vpc,
+        port: 80,
+        targetGroupName: branch,
+        targetType: elb.TargetType.INSTANCE,
+      });
+      listener.addTargetGroups('targetGroup-' + branch, {
+        targetGroups: [emptytg],
+        conditions: [
+          elb.ListenerCondition.pathPatterns([`/${branch}/*`])
+        ],
+        priority: i + 1,
+      });
+
+      // Add targetGroup arn to parameter
+      const targetGroupArn = emptytg.targetGroupArn;
+      new ssm.StringParameter(this, 'targetGroupArn-' + branch, {
+        parameterName: `/demo/${branch}/targetGroupArn`,
+        stringValue: targetGroupArn,
+      });
+    }
+    listener.addAction('DefaultAction', {
+      action: elb.ListenerAction.fixedResponse(404, {
+        contentType: 'text/plain',
+        messageBody: 'Cannot route your request; no matching project found.',
+      }),
+    });
+
     // Add vpc id to parameter
     const vpcId = vpc.vpcId;
     new ssm.StringParameter(this, 'vpcId', {

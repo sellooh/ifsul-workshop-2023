@@ -52,6 +52,15 @@ export class ServiceStack extends cdk.Stack {
       loadBalancerArn
     });
 
+    // Import /demo/<branch>/targetGroupArn
+    const targetGroupArn = ssm.StringParameter.valueFromLookup(this, `/demo/${props.serviceName}/targetGroupArn`);
+    let targetGroup = undefined;
+    if (targetGroupArn.indexOf('dummy') === -1) {
+      targetGroup = elb.ApplicationTargetGroup.fromTargetGroupAttributes(this, 'targetGroup', {
+        targetGroupArn
+      });
+    }
+
     const environment = Environment.fromEnvironmentAttributes(this, 'demo', {
       cluster: cluster as ecs.Cluster,
       capacityType: EnvironmentCapacityType.FARGATE
@@ -69,6 +78,7 @@ export class ServiceStack extends cdk.Stack {
     }))
     nameDescription.add(new ImportedHttpLoadBalancerExtension({
       applicationLoadBalancer,
+      targetGroup,
     }));;
 
     const nameService = new Service(this, props.serviceName, {

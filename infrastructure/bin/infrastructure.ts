@@ -21,7 +21,7 @@ new InfrastructureStack(app, 'InfrastructureStack', {
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
 });
 
-new PipelineStack(app, 'PipelineStack', {
+new PipelineStack(app, 'PipelineStack-'+process.env.BRANCH_NAME, {
   branchName: process.env.BRANCH_NAME || 'main',
   stackProps: {
     env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
