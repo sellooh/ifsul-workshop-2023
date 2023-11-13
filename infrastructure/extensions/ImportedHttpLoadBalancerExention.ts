@@ -1,6 +1,7 @@
 import { CfnOutput, Duration } from 'aws-cdk-lib';
 import * as ecs from 'aws-cdk-lib/aws-ecs';
 import * as alb from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import { Construct } from 'constructs';
 import { ServiceExtension, ServiceBuild, Service } from '@aws-cdk-containers/ecs-service-extensions';
 
@@ -22,10 +23,12 @@ export interface HttpLoadBalancerProps {
  */
 export class ImportedHttpLoadBalancerExtension extends ServiceExtension {
   private readonly targetGroup?: alb.IApplicationTargetGroup;
+  private readonly alb: alb.IApplicationLoadBalancer;
 
   constructor (props: HttpLoadBalancerProps) {
     super('load-balancer');
     this.targetGroup = props.targetGroup;
+    this.alb = props.applicationLoadBalancer;
   }
 
   public prehook (service: Service, scope: Construct): void {
@@ -61,6 +64,8 @@ export class ImportedHttpLoadBalancerExtension extends ServiceExtension {
       return;
     }
     this.targetGroup.addTarget(service);
+    // allow security group to receive traffic from ALB
+    service.connections.allowFrom(this.alb, ec2.Port.tcp(80));
     this.parentService.targetGroup = this.targetGroup as alb.ApplicationTargetGroup;
   }
 }

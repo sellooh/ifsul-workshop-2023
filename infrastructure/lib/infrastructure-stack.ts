@@ -19,7 +19,7 @@ export class InfrastructureStack extends cdk.Stack {
 
     // Create an environment to deploy a service in.
     const environment = new Environment(this, 'demo', {
-      vpc
+      vpc,
     });
 
     // Create the Load Balancer
@@ -41,7 +41,7 @@ export class InfrastructureStack extends cdk.Stack {
         vpc,
         port: 80,
         targetGroupName: branch,
-        targetType: elb.TargetType.INSTANCE,
+        targetType: elb.TargetType.IP,
       });
       listener.addTargetGroups('targetGroup-' + branch, {
         targetGroups: [emptytg],
