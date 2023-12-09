@@ -20,6 +20,7 @@ export class PipelineStack extends cdk.Stack {
 
     const githubInput = CodePipelineSource.connection("sellooh/ifsul-workshop-2023", props.branchName, {
       connectionArn: githubConnectionArn,
+      triggerOnPush: false,
     });
 
     const codebuildPolicies: PolicyStatement[] = [
