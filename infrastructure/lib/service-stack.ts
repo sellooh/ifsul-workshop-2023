@@ -16,7 +16,7 @@ export class ServiceStage extends cdk.Stage {
   constructor(scope: Construct, id: string, props: ServiceStageProps) {
     super(scope, id, props.stackProps);
 
-    new ServiceStack(this, 'ServiceStack', {
+    new ServiceStack(this, 'Service' + props.serviceName, {
       serviceName: props.serviceName,
       stackProps: props.stackProps,
     });
