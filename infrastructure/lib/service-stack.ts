@@ -6,6 +6,8 @@ import * as ecs from 'aws-cdk-lib/aws-ecs';
 import * as elb from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { Container, Environment, EnvironmentCapacityType, Service, ServiceDescription } from '@aws-cdk-containers/ecs-service-extensions';
 import { ImportedHttpLoadBalancerExtension } from '../extensions/ImportedHttpLoadBalancerExention';
+import { MyHealthCheckExtension } from './extensions/ContainerHealthcheckExtension';
+import { Platform } from 'aws-cdk-lib/aws-ecr-assets';
 
 interface ServiceStageProps {
   serviceName: string;
@@ -66,12 +68,23 @@ export class ServiceStack extends cdk.Stack {
       capacityType: EnvironmentCapacityType.FARGATE
     });
 
+    // create docker asset cdk
+    const image = ecs.ContainerImage.fromAsset('..', {
+      buildArgs: {
+        JAVA_TARGETPLATFORM: 'linux/amd64',
+        API_PORT: '80',
+      },
+      platform: Platform.LINUX_AMD64,
+      assetName: props.serviceName,
+      target: 'cloud'
+    });
+
     const nameDescription = new ServiceDescription();
     nameDescription.add(new Container({
       cpu: 1024,
       memoryMiB: 2048,
       trafficPort: 80,
-      image: ecs.ContainerImage.fromRegistry('nathanpeck/name'),
+      image,
       environment: {
         PORT: '80',
       },
@@ -80,6 +93,8 @@ export class ServiceStack extends cdk.Stack {
       applicationLoadBalancer,
       targetGroup,
     }));;
+
+    nameDescription.add(new MyHealthCheckExtension(props.serviceName, ['/app/gradlew', 'bootRun'], '80'));
 
     const nameService = new Service(this, props.serviceName, {
       environment: environment,

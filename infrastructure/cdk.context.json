@@ -1,4 +1,8 @@
 {
+  "ssm:account=409649272767:parameterName=/demo/vpcId:region=us-east-1": "vpc-04829fd3de2c48cb0",
+  "ssm:account=409649272767:parameterName=/demo/clusterName:region=us-east-1": "InfrastructureStack-demoenvironmentcluster97978DFC-INfsdkbfdshT",
+  "ssm:account=409649272767:parameterName=/demo/loadBalancerArn:region=us-east-1": "arn:aws:elasticloadbalancing:us-east-1:409649272767:loadbalancer/app/Infras-LB8A1-UC3ZhfDmSKGd/e2c7e2e10ade79a3",
+  "ssm:account=409649272767:parameterName=/demo/main/targetGroupArn:region=us-east-1": "arn:aws:elasticloadbalancing:us-east-1:409649272767:targetgroup/main/a9868072286e2c40",
   "vpc-provider:account=409649272767:filter.vpc-id=vpc-04829fd3de2c48cb0:region=us-east-1:returnAsymmetricSubnets=true": {
     "vpcId": "vpc-04829fd3de2c48cb0",
     "vpcCidrBlock": "10.0.0.0/16",
@@ -55,23 +59,18 @@
       }
     ]
   },
-  "ssm:account=409649272767:parameterName=/demo/vpcId:region=us-east-1": "vpc-04829fd3de2c48cb0",
-  "ssm:account=409649272767:parameterName=/demo/clusterName:region=us-east-1": "InfrastructureStack-demoenvironmentcluster97978DFC-UQBaqyehMWR5",
-  "ssm:account=409649272767:parameterName=/demo/loadBalancerArn:region=us-east-1": "arn:aws:elasticloadbalancing:us-east-1:409649272767:loadbalancer/app/Infras-LB8A1-8BgaPwzO0YLK/79cab7ae0ecf8111",
-  "load-balancer:account=409649272767:loadBalancerArn=arn$:aws$:elasticloadbalancing$:us-east-1$:409649272767$:loadbalancer/app/Infras-LB8A1-8BgaPwzO0YLK/79cab7ae0ecf8111:loadBalancerType=application:region=us-east-1": {
-    "loadBalancerArn": "arn:aws:elasticloadbalancing:us-east-1:409649272767:loadbalancer/app/Infras-LB8A1-8BgaPwzO0YLK/79cab7ae0ecf8111",
+  "load-balancer:account=409649272767:loadBalancerArn=arn$:aws$:elasticloadbalancing$:us-east-1$:409649272767$:loadbalancer/app/Infras-LB8A1-UC3ZhfDmSKGd/e2c7e2e10ade79a3:loadBalancerType=application:region=us-east-1": {
+    "loadBalancerArn": "arn:aws:elasticloadbalancing:us-east-1:409649272767:loadbalancer/app/Infras-LB8A1-UC3ZhfDmSKGd/e2c7e2e10ade79a3",
     "loadBalancerCanonicalHostedZoneId": "Z35SXDOTRQ7X7K",
-    "loadBalancerDnsName": "Infras-LB8A1-8BgaPwzO0YLK-1400550131.us-east-1.elb.amazonaws.com",
+    "loadBalancerDnsName": "Infras-LB8A1-UC3ZhfDmSKGd-85101351.us-east-1.elb.amazonaws.com",
     "vpcId": "vpc-04829fd3de2c48cb0",
     "securityGroupIds": [
-      "sg-01f91798bd78a3a62"
+      "sg-03ad8bd3a6e88258c"
     ],
     "ipAddressType": "ipv4"
   },
-  "security-group:account=409649272767:region=us-east-1:securityGroupId=sg-01f91798bd78a3a62": {
-    "securityGroupId": "sg-01f91798bd78a3a62",
+  "security-group:account=409649272767:region=us-east-1:securityGroupId=sg-03ad8bd3a6e88258c": {
+    "securityGroupId": "sg-03ad8bd3a6e88258c",
     "allowAllOutbound": false
-  },
-  "ssm:account=409649272767:parameterName=/demo/main/targetGroupArn:region=us-east-1": "arn:aws:elasticloadbalancing:us-east-1:409649272767:targetgroup/main/36ab71f870fb4665",
-  "ssm:account=409649272767:parameterName=/demo/sellooh/targetGroupArn:region=us-east-1": "arn:aws:elasticloadbalancing:us-east-1:409649272767:targetgroup/sellooh/9d695ae0c34766a1"
+  }
 }

@@ -39,6 +39,11 @@ export class PipelineStack extends cdk.Stack {
         actions: ["elasticloadbalancing:Describe*"],
         resources: ["*"],
       }),
+      // allow ecr push/pull
+      new PolicyStatement({
+        actions: ["ecr:GetAuthorizationToken", "ecr:BatchCheckLayerAvailability", "ecr:GetDownloadUrlForLayer", "ecr:BatchGetImage", "ecr:BatchDeleteImage", "ecr:PutImage", "ecr:InitiateLayerUpload", "ecr:UploadLayerPart", "ecr:CompleteLayerUpload"],
+        resources: ["*"],
+      }),
     ];
 
     const codepipeline = new CodePipeline(this, "Pipeline", {
