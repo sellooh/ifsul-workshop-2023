@@ -47,7 +47,7 @@ export class PipelineStack extends cdk.Stack {
 
     const codepipeline = new CodePipeline(this, "Pipeline", {
       pipelineName: "Pipeline-"+props.branchName,
-      selfMutation: false,
+      selfMutation: true,
       synth: new ShellStep("Synth", {
         input: githubInput,
         commands: ["cd infrastructure", "npm ci", "npm run build", "npx cdk synth"],
