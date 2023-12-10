@@ -30,7 +30,7 @@ export class InfrastructureStack extends cdk.Stack {
 
     // Create listener and target groups
     const listener = lb.addListener('LBListener', {
-      port: 8080,
+      port: 80,
       open: true,
       protocol: elb.ApplicationProtocol.HTTP,
     });
@@ -39,7 +39,13 @@ export class InfrastructureStack extends cdk.Stack {
     for(const [i, branch] of branches.entries()) {
       const emptytg = new elb.ApplicationTargetGroup(this, 'applicationTargetGroup-' + branch, {
         vpc,
-        port: 80,
+        port: 8080,
+        healthCheck: {
+          enabled: true,
+          healthyHttpCodes: '200',
+          path: `/${branch}/healthcheck`,
+          timeout: cdk.Duration.seconds(5),
+        },
         targetGroupName: branch,
         targetType: elb.TargetType.IP,
       });

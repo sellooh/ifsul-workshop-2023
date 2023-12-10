@@ -1,4 +1,4 @@
-import { CfnOutput, Duration } from 'aws-cdk-lib';
+import { Duration } from 'aws-cdk-lib';
 import * as ecs from 'aws-cdk-lib/aws-ecs';
 import * as alb from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
@@ -50,22 +50,12 @@ export class ImportedHttpLoadBalancerExtension extends ServiceExtension {
 
   // After the service is created add the service to the load balancer's listener
   public useService (service: ecs.Ec2Service | ecs.FargateService): void {
-    // const targetGroup = this.listener.addTargets(this.parentService.id, {
-    //   deregistrationDelay: Duration.seconds(10),
-    //   port: 80,
-    //   conditions: [
-    //     alb.ListenerCondition.pathPatterns([`/${this.parentService.id}/*`])
-    //   ],
-    //   priority: 1,
-    //   targets: [service],
-    //   protocol: alb.ApplicationProtocol.HTTP
-    // });
     if (this.targetGroup === undefined) {
       return;
     }
     this.targetGroup.addTarget(service);
     // allow security group to receive traffic from ALB
-    service.connections.allowFrom(this.alb, ec2.Port.tcp(80));
+    service.connections.allowFrom(this.alb, ec2.Port.tcp(8080));
     this.parentService.targetGroup = this.targetGroup as alb.ApplicationTargetGroup;
   }
 }

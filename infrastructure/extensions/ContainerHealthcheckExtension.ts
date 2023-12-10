@@ -9,11 +9,13 @@ import {
 } from '@aws-cdk-containers/ecs-service-extensions';
 
 export class MyHealthCheckExtension extends ServiceExtension {
+  private readonly serviceName: string;
   private readonly cmd: string[];
   private readonly port: string;
 
   constructor (name: string, cmd: string[], port: string) {
     super(name);
+    this.serviceName = name;
     this.cmd = cmd;
     this.port = port;
   }
@@ -46,18 +48,20 @@ export class MyHealthCheckExtension extends ServiceExtension {
       throw new Error('My HealthCheck Extension requires a container');
     }
 
-    container.addContainerMutatingHook(new MyHealthCheckHook(this.cmd, this.port));
+    container.addContainerMutatingHook(new MyHealthCheckHook(this.serviceName, this.cmd, this.port));
   }
 }
 
 export class MyHealthCheckHook extends ContainerMutatingHook {
+  private readonly serviceName: string;
   private readonly cmd: string[];
   private readonly port: string;
 
-  constructor (cmd: string[], port: string) {
+  constructor (serviceName: string, cmd: string[], port: string) {
     super();
     this.cmd = cmd;
     this.port = port;
+    this.serviceName = serviceName;
   }
 
   public mutateContainerDefinition (props: ecs.ContainerDefinitionOptions): ecs.ContainerDefinitionOptions {
@@ -66,16 +70,16 @@ export class MyHealthCheckHook extends ContainerMutatingHook {
 
       entryPoint: ["/bin/bash"],
       command: this.cmd,
-      // healthCheck: {
-      //   command: [
-      //     'CMD-SHELL',
-      //     `curl -f http://localhost:${this.port}/version || exit 1`
-      //   ],
-      //   startPeriod: cdk.Duration.seconds(10),
-      //   interval: cdk.Duration.seconds(5),
-      //   timeout: cdk.Duration.seconds(2),
-      //   retries: 3
-      // }
+      healthCheck: {
+        command: [
+          'CMD-SHELL',
+          `curl -f http://localhost:${this.port}/${this.serviceName}/healthcheck || exit 1`
+        ],
+        startPeriod: cdk.Duration.seconds(120),
+        interval: cdk.Duration.seconds(5),
+        timeout: cdk.Duration.seconds(2),
+        retries: 10
+      }
     };
   }
 }

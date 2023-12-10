@@ -6,8 +6,9 @@ import * as ecs from 'aws-cdk-lib/aws-ecs';
 import * as elb from 'aws-cdk-lib/aws-elasticloadbalancingv2';
 import { Container, Environment, EnvironmentCapacityType, Service, ServiceDescription } from '@aws-cdk-containers/ecs-service-extensions';
 import { ImportedHttpLoadBalancerExtension } from '../extensions/ImportedHttpLoadBalancerExention';
-import { MyHealthCheckExtension } from './extensions/ContainerHealthcheckExtension';
+import { MyHealthCheckExtension } from '../extensions/ContainerHealthcheckExtension';
 import { Platform } from 'aws-cdk-lib/aws-ecr-assets';
+import { MysqlExtension } from '../extensions/MysqlExtension';
 
 interface ServiceStageProps {
   serviceName: string;
@@ -18,7 +19,7 @@ export class ServiceStage extends cdk.Stage {
   constructor(scope: Construct, id: string, props: ServiceStageProps) {
     super(scope, id, props.stackProps);
 
-    new ServiceStack(this, 'Service' + props.serviceName, {
+    new ServiceStack(this, props.serviceName, {
       serviceName: props.serviceName,
       stackProps: props.stackProps,
     });
@@ -72,7 +73,7 @@ export class ServiceStack extends cdk.Stack {
     const image = ecs.ContainerImage.fromAsset('..', {
       buildArgs: {
         JAVA_TARGETPLATFORM: 'linux/amd64',
-        API_PORT: '80',
+        API_PORT: '8080',
       },
       platform: Platform.LINUX_AMD64,
       assetName: props.serviceName,
@@ -83,10 +84,12 @@ export class ServiceStack extends cdk.Stack {
     nameDescription.add(new Container({
       cpu: 1024,
       memoryMiB: 2048,
-      trafficPort: 80,
+      trafficPort: 8080,
       image,
       environment: {
-        PORT: '80',
+        API_PORT: '8080',
+        MYSQL_ROOT_PASSWORD: process.env.MYSQL_PASSWORD ?? "changeme",
+        BASE_PATH: props.serviceName,
       },
     }))
     nameDescription.add(new ImportedHttpLoadBalancerExtension({
@@ -94,7 +97,8 @@ export class ServiceStack extends cdk.Stack {
       targetGroup,
     }));;
 
-    nameDescription.add(new MyHealthCheckExtension(props.serviceName, ['/app/gradlew', 'bootRun'], '80'));
+    nameDescription.add(new MyHealthCheckExtension(props.serviceName, ['/usr/bin/gradle', 'bootRun'], '8080'));
+    nameDescription.add(new MysqlExtension());
 
     const nameService = new Service(this, props.serviceName, {
       environment: environment,

@@ -1,4 +1,3 @@
-import { Container, Environment, HttpLoadBalancerExtension, Service, ServiceDescription } from '@aws-cdk-containers/ecs-service-extensions';
 import * as cdk from 'aws-cdk-lib';
 import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { CodePipeline, CodePipelineSource, ShellStep } from 'aws-cdk-lib/pipelines';

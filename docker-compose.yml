@@ -6,6 +6,7 @@ services:
     platform: ${JAVA_TARGETPLATFORM}
     build:
       context: .
+      target: base
       args:
         JAVA_TARGETPLATFORM: ${JAVA_TARGETPLATFORM}
         API_PORT: ${API_PORT}
