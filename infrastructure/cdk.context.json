@@ -2,7 +2,7 @@
   "ssm:account=409649272767:parameterName=/demo/vpcId:region=us-east-1": "vpc-04829fd3de2c48cb0",
   "ssm:account=409649272767:parameterName=/demo/clusterName:region=us-east-1": "InfrastructureStack-demoenvironmentcluster97978DFC-INfsdkbfdshT",
   "ssm:account=409649272767:parameterName=/demo/loadBalancerArn:region=us-east-1": "arn:aws:elasticloadbalancing:us-east-1:409649272767:loadbalancer/app/Infras-LB8A1-UC3ZhfDmSKGd/e2c7e2e10ade79a3",
-  "ssm:account=409649272767:parameterName=/demo/main/targetGroupArn:region=us-east-1": "arn:aws:elasticloadbalancing:us-east-1:409649272767:targetgroup/main/a9868072286e2c40",
+  "ssm:account=409649272767:parameterName=/demo/main/targetGroupArn:region=us-east-1": "arn:aws:elasticloadbalancing:us-east-1:409649272767:targetgroup/main/e4cf1195ddd33bd1",
   "vpc-provider:account=409649272767:filter.vpc-id=vpc-04829fd3de2c48cb0:region=us-east-1:returnAsymmetricSubnets=true": {
     "vpcId": "vpc-04829fd3de2c48cb0",
     "vpcCidrBlock": "10.0.0.0/16",
