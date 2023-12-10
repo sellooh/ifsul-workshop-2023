@@ -97,7 +97,7 @@ export class ServiceStack extends cdk.Stack {
       targetGroup,
     }));;
 
-    nameDescription.add(new MyHealthCheckExtension(props.serviceName, ['/usr/bin/gradle', 'bootRun'], '8080'));
+    nameDescription.add(new MyHealthCheckExtension(props.serviceName, ['java', '-jar', 'app.jar'], '8080'));
     nameDescription.add(new MysqlExtension());
 
     const nameService = new Service(this, props.serviceName, {

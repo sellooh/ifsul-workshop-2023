@@ -40,11 +40,13 @@ export class InfrastructureStack extends cdk.Stack {
       const emptytg = new elb.ApplicationTargetGroup(this, 'applicationTargetGroup-' + branch, {
         vpc,
         port: 8080,
+        deregistrationDelay: cdk.Duration.seconds(300),
         healthCheck: {
           enabled: true,
           healthyHttpCodes: '200',
           path: `/${branch}/healthcheck`,
           timeout: cdk.Duration.seconds(5),
+          unhealthyThresholdCount: 8,
         },
         targetGroupName: branch,
         targetType: elb.TargetType.IP,
