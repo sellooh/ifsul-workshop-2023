@@ -1,5 +1,5 @@
 ARG VARIANT="jdk17"
-ARG JAVA_TARGETPLATFORM="linux/arm64/v8"
+ARG JAVA_TARGETPLATFORM="linux/amd64"
 FROM --platform=${JAVA_TARGETPLATFORM} gradle:jdk17 as base
 
 # user and app setup
@@ -25,3 +25,5 @@ RUN mkdir /app
 WORKDIR /app
 COPY --from=base /app/build/libs/*.jar /app/app.jar
 
+RUN arch
+RUN java -version

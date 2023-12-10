@@ -73,7 +73,6 @@ export class ServiceStack extends cdk.Stack {
     const image = ecs.ContainerImage.fromAsset('..', {
       buildArgs: {
         JAVA_TARGETPLATFORM: 'linux/amd64',
-        API_PORT: '8080',
       },
       platform: Platform.LINUX_AMD64,
       assetName: props.serviceName,
