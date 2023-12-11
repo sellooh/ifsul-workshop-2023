@@ -16,11 +16,11 @@ COPY --chown=app:app gradle /app/gradle
 
 RUN gradle assemble
 
-FROM --platform=${JAVA_TARGETPLATFORM} public.ecr.aws/docker/library/gradle:jdk17 as cloud
+FROM --platform=${JAVA_TARGETPLATFORM} public.ecr.aws/amazoncorretto/amazoncorretto:17 as cloud
 
 # healthcheck deps
-RUN apt-get update \
-    && apt-get install -y mysql-client
+RUN yum update -y \
+    && yum install -y mysql
 
 # envs
 ENV MYSQL_HOST=127.0.0.1
