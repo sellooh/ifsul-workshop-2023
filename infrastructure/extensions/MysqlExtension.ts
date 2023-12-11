@@ -29,6 +29,9 @@ export class MysqlExtension extends ServiceExtension {
         MYSQL_DATABASE: "database",
         MYSQL_ROOT_PASSWORD: process.env.MYSQL_PASSWORD ?? "changeme",
       },
+      command: [
+        "--default-authentication-plugin=mysql_native_password --skip-mysqlx"
+      ],
       healthCheck: {
         command: [
           'CMD-SHELL',
