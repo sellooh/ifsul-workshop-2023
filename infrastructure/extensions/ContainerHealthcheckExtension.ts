@@ -68,7 +68,7 @@ export class MyHealthCheckHook extends ContainerMutatingHook {
     return {
       ...props,
 
-      entryPoint: this.cmd,
+      command: this.cmd,
       healthCheck: {
         command: [
           'CMD-SHELL',

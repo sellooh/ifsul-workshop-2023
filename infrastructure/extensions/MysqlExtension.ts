@@ -32,7 +32,7 @@ export class MysqlExtension extends ServiceExtension {
       healthCheck: {
         command: [
           'CMD-SHELL',
-          'mysqladmin ping -p$MYSQL_ROOT_PASSWORD --protocol tpc',
+          'mysqladmin ping -h localhost',
         ],
         startPeriod: Duration.seconds(10),
         interval: Duration.seconds(5),
