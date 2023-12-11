@@ -5,7 +5,6 @@ MYSQL_HOST="${MYSQL_HOST:-127.0.0.1}"
 MYSQL_ROOT_PASSWORD="${MYSQL_ROOT_PASSWORD:-changeme}"
 
 while true; do
-  echo $MYSQL_HOST
   mysqladmin ping -h $MYSQL_HOST -p$MYSQL_ROOT_PASSWORD -u $MYSQL_USER
 
   if [ $? -eq 0 ]; then

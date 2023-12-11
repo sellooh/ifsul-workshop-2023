@@ -88,7 +88,7 @@ export class ServiceStack extends cdk.Stack {
       environment: {
         API_PORT: '8080',
         MYSQL_ROOT_PASSWORD: process.env.MYSQL_PASSWORD ?? "changeme",
-        BASE_PATH: props.serviceName,
+        BASE_PATH: `/${props.serviceName}`,
       },
     }))
     nameDescription.add(new ImportedHttpLoadBalancerExtension({

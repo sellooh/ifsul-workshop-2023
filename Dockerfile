@@ -33,6 +33,7 @@ WORKDIR /app
 COPY --from=base --chown=app:app /app/build/libs/*.jar /app/app.jar
 COPY --chown=app:app ./infrastructure/docker-entrypoint.sh /app/docker-entrypoint.sh
 
+# verbose checks
 RUN arch
 RUN java -version
 
