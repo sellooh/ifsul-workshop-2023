@@ -13,7 +13,6 @@ services:
       - ${MYSQL_PORT}:${MYSQL_PORT}
     restart: unless-stopped
     env_file: .env
-    command: mysqld --default-authentication-plugin=mysql_native_password --skip-mysqlx
     healthcheck:
         test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
         timeout: 20s
