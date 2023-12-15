@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface NoteRepository extends CrudRepository<Note, Integer> {
-
+  Page<Note> findAll(Pageable page);
 }
