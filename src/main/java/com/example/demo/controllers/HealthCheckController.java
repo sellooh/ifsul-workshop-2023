@@ -10,6 +10,6 @@ public class HealthCheckController {
 
     @GetMapping("/healthcheck")
     public ResponseEntity<String> healthCheck() {
-        return new ResponseEntity<>("Application is running", HttpStatus.OK);
+        return new ResponseEntity<>("Aplicação está ROdando 🐧", HttpStatus.OK);
     }
 }
