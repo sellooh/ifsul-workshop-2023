@@ -34,8 +34,8 @@ public class NoteController {
 	@GetMapping("/notes")
 	public ResponseEntity<List<Note>> allNotes() {
 		List<Note> notes = noteService.findAll();
-
-		return new ResponseEntity<>(notes, HttpStatus.OK);
+		return ResponseEntity.ok().header("X-total-count", String.valueOf(notes.size()))
+				.body(notes);
 	}
 
 	@GetMapping("/notes/{id}")
