@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entities.Note;
@@ -21,11 +23,12 @@ public class NoteService {
         return NoteRepository.save(Note);
     }
 
-    public List<Note> findAll() {
-        List<Note> Notes = new ArrayList<>();
-        NoteRepository.findAll().forEach(Notes::add);
+    public Page<Note> findAll(Pageable pageable) {
+        return NoteRepository.findAll(pageable);
+    }
 
-        return Notes;
+    public Long countAll() {
+        return NoteRepository.count();
     }
 
     public Optional<Note> findById(int id) {

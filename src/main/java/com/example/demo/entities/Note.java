@@ -14,7 +14,7 @@ public class Note {
 	@Column(nullable = false)
 	private Integer id;
 
-	@Column(unique = true, length = 200, nullable = false)
+	@Column(unique = false, length = 200, nullable = false)
 	private String name;
 
 	@Column(nullable = false)

@@ -3,6 +3,7 @@ package com.example.demo.requests;
 import com.example.demo.entities.Note;
 
 public record CreateNoteInput(String name) {
+	
 	public Note toNote() {
 		Note note = new Note();
 
@@ -11,4 +12,5 @@ public record CreateNoteInput(String name) {
 
 		return note;
 	}
+	
 }

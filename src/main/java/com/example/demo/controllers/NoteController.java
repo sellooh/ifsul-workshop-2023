@@ -3,6 +3,9 @@ package com.example.demo.controllers;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,8 +35,15 @@ public class NoteController {
 	}
 
 	@GetMapping("/notes")
-	public ResponseEntity<List<Note>> allNotes() {
-		List<Note> notes = noteService.findAll();
+	public ResponseEntity<Page<Note>> allNotes(@PageableDefault(size = 10) Pageable pageable) {
+		Page<Note> notes = noteService.findAll(pageable);
+
+		return new ResponseEntity<>(notes, HttpStatus.OK);
+	}
+
+	@GetMapping("/notes/X-total-count")
+	public ResponseEntity<Long> countNotes() {
+		Long notes = noteService.countAll();
 
 		return new ResponseEntity<>(notes, HttpStatus.OK);
 	}
