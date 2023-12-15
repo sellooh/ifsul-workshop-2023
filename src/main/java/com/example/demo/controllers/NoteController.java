@@ -32,11 +32,24 @@ public class NoteController {
 	}
 
 	@GetMapping("/notes")
-	public ResponseEntity<List<Note>> allNotes() {
-		List<Note> notes = noteService.findAll();
+	public ResponseEntity<List<Note>> allNotes(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+   	 Pageable pageable = PageRequest.of(page, size);
+    	Page<Note> notesPage = noteService.findAllPaginated(pageable);
 
-		return new ResponseEntity<>(notes, HttpStatus.OK);
-	}
+   	 if (notesPage.isEmpty()) {
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    return new ResponseEntity<>(notesPage.getContent(), HttpStatus.OK);
+}
+
+
+	// @GetMapping("/notes")
+	// public ResponseEntity<List<Note>> allNotes() {
+	// 	List<Note> notes = noteService.findAll();
+
+	// 	return new ResponseEntity<>(notes, HttpStatus.OK);
+	// }
 
 	@GetMapping("/notes/{id}")
 	public ResponseEntity<Note> oneNote(@PathVariable int id) {
